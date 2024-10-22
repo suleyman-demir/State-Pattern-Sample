@@ -1,0 +1,71 @@
+package com.delivery.cargo.controller;
+
+import com.delivery.cargo.dto.KargoDto;
+import com.delivery.cargo.model.PackageEntity;
+import com.delivery.cargo.service.KargoService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@Slf4j
+@RestController
+@RequestMapping("/v1/api/delivery")
+public class KargoController {
+
+
+    private final KargoService kargoService;
+
+    public KargoController(KargoService kargoService) {
+        this.kargoService = kargoService;
+    }
+
+
+//    @GetMapping("/{id}")
+//    public ResponseEntity<KargoDto> getKargoById(@PathVariable Long id) {
+//        log.info("Kargo getiriliyor: {}", id);
+//        try {
+//            Optional<ResponseEntity<KargoEntity>> kargoDtoOptional = Optional.ofNullable(kargoService.getKargoById(id));
+//            if (kargoDtoOptional.isPresent()) {
+//                return ResponseEntity.ok(KargoDto.convert(kargoDtoOptional.get().getBody()));
+//            }
+//        } catch (Exception e) {
+//            log.error("Kargo getirilemedi: {}", id, e);
+//            throw new RuntimeException(e);
+//        }
+//        return ResponseEntity.notFound().build();
+//    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<KargoDto> getKargoById(@PathVariable Long id) {
+        log.info("Kargo getiriliyor: {}", id);
+        try {
+            PackageEntity packageEntity = kargoService.getKargoById(id).getBody();
+            if (packageEntity != null) {
+                KargoDto kargoDto = KargoDto.convert(packageEntity);
+                return ResponseEntity.ok(kargoDto);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            log.error("Kargo getirilemedi: {}", id, e);
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @PostMapping("/add")
+    public ResponseEntity<KargoDto> addKargo(@RequestBody KargoDto kargoDto) {
+        log.info("Kargo add: {}", kargoDto);
+        PackageEntity packageEntity = kargoService.addKargo(kargoDto);
+        return ResponseEntity.ok(KargoDto.convert(packageEntity));
+    }
+
+
+    @PostMapping("setState/{id}")
+    public ResponseEntity<PackageEntity> updateKargoStatus(@PathVariable Long id) throws Exception {
+        log.info("Kargo durumu güncelleniyor: {}", id);
+        PackageEntity updatedPackage = kargoService.updateKargoStatus(id).getBody();
+        return ResponseEntity.ok(updatedPackage);
+    }
+
+}
