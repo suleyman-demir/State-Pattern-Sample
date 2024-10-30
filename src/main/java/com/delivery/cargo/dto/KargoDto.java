@@ -5,13 +5,15 @@ import com.delivery.cargo.chain.PackageState;
 import com.delivery.cargo.model.PackageEntity;
 
 public record KargoDto (
-     Long id,
-     String gondericiAdi,
-     String gondericiAdresi,
-     int desi,
-     String aliciAdi,
-     String aliciAdresi,
-     PackageState state) {
+        Long id,
+        String gondericiAdi,
+        String gondericiAdresi,
+        int desi,
+        String aliciAdi,
+        String aliciAdresi,
+        //String courierId
+        PackageState state) {
+
 
 
     public static KargoDto convert(PackageEntity from) {
@@ -24,4 +26,6 @@ public record KargoDto (
 
 
     }
+
+
 }

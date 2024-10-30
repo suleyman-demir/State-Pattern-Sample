@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/v1/api/delivery")
@@ -35,8 +37,8 @@ public class KargoController {
 //        return ResponseEntity.notFound().build();
 //    }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<KargoDto> getKargoById(@PathVariable Long id) {
+    @GetMapping("/cargo/{id}")
+    public ResponseEntity<KargoDto> getCargoById(@PathVariable Long id) {
         log.info("Kargo getiriliyor: {}", id);
         try {
             PackageEntity packageEntity = kargoService.getKargoById(id).getBody();
@@ -66,6 +68,23 @@ public class KargoController {
         log.info("Kargo durumu güncelleniyor: {}", id);
         PackageEntity updatedPackage = kargoService.updateKargoStatus(id).getBody();
         return ResponseEntity.ok(updatedPackage);
+    }
+
+    @GetMapping("/cargos")
+    public ResponseEntity<List<KargoDto>> getAllCargos() {
+        log.info("Tüm kargolar getiriliyor");
+        List<KargoDto> kargoDtos=kargoService.getAllCargos();
+        if (kargoDtos != null && !kargoDtos.isEmpty()) {
+            return ResponseEntity.ok(kargoDtos);
+        }else {
+            return ResponseEntity.noContent().build();
+
+
+        }
+    }
+    @PostMapping("/byIds")
+    public List<KargoDto> getCargosByIds(@RequestBody List<Long> cargoIds) {
+        return kargoService.getCargosByIds(cargoIds);
     }
 
 }
